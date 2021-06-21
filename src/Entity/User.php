@@ -51,16 +51,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $updated_at;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $apiKey;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $is_logged;
-
 
     public function getId(): ?int
     {
@@ -175,30 +165,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?\DateTimeInterface $updated_at): self
     {
         $this->updated_at = $updated_at;
-
-        return $this;
-    }
-
-    public function getApiKey(): ?string
-    {
-        return $this->apiKey;
-    }
-
-    public function setApiKey(?string $apiKey): self
-    {
-        $this->apiKey = $apiKey;
-
-        return $this;
-    }
-
-    public function getIsLogged(): ?bool
-    {
-        return $this->is_logged;
-    }
-
-    public function setIsLogged(bool $is_logged): self
-    {
-        $this->is_logged = $is_logged;
 
         return $this;
     }

@@ -5,7 +5,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Entity\User as User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -13,6 +12,8 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Firebase\JWT\JWT;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\User as User;
+
 
 class JwtAuthenticator extends AbstractGuardAuthenticator
 {
@@ -48,15 +49,16 @@ class JwtAuthenticator extends AbstractGuardAuthenticator
         try {
             $credentials = str_replace('Bearer ', '', $credentials);
             $jwt = (array) JWT::decode(
-                $credentials, 
-                $this->params->get('jwt_secret'),
-                ['HS256']
-            );
+                              $credentials, 
+                              $this->params->get('jwt_secret'),
+                              ['HS256']
+                            );
             return $this->em->getRepository(User::class)
-                ->findOneBy([
-                    'username' => $jwt['username'],
-                ]);
-        }catch (\Exception $exception) {
+                    ->findOneBy([
+                            'username' => $jwt['username'],
+                    ]);
+        }
+        catch (\Exception $exception) {
                 throw new AuthenticationException($exception->getMessage());
         }
     }
@@ -75,10 +77,6 @@ class JwtAuthenticator extends AbstractGuardAuthenticator
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        return true;
-    }
-
-    public function CustomCredentials(){
         return true;
     }
 
