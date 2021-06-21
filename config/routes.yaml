@@ -1,0 +1,32 @@
+list_user:
+    path:       /api/users/show/{id}
+    controller: App\Controller\UsersController::list
+    methods:    GET
+list_all_users:
+    path:       /api/users/show
+    controller: App\Controller\UsersController::all
+    methods:    GET
+login:
+    path:       /login/{username}/{password}
+    controller: App\Controller\UsersController::loginUser
+    methods:    POST
+register_user:
+    path:       /register/{username}/{password}
+    controller: App\Controller\UsersController::registerUser
+    methods:    POST
+delete_user:
+    path:       /api/users/delete/{id}
+    controller: App\Controller\UsersController::deleteUser
+    methods:    POST
+logout:
+    path:       /logout
+    controller: App\Controller\UsersController::logout
+    methods:    POST
+update_username:
+    path:       /api/users/update/username/{username}/{newUsername}
+    controller: App\Controller\UsersController::updateUsername
+    methods:    POST
+update_password:
+    path:       /api/users/update/password/{username}/{passwordNew}
+    controller: App\Controller\UsersController::updatePassword
+    methods:    POST

@@ -3,7 +3,7 @@ namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\User as User;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -11,6 +11,8 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Firebase\JWT\JWT;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+
+
 
 class UsersController extends AbstractController{
 
@@ -26,10 +28,10 @@ class UsersController extends AbstractController{
 
         $userData = array(
             'username'  => $username,
-            'roles'     => $roles,
-            'is_active' => $activated,
             'created_at'=> $created_at,
             'updated_at'=> $updated_at,
+            'is_active' => $activated,
+            'roles'     => $roles
         );
 
         $serializer = $this->container->get('serializer');
@@ -55,10 +57,10 @@ class UsersController extends AbstractController{
                 $usersData,
                 [
                     'username'  => $username,
-                    'roles'     => $roles,
-                    'is_active' => $activated,
                     'created_at'=> $created_at,
                     'updated_at'=> $updated_at,
+                    'is_active' => $activated,
+                    'roles'     => $roles
                 ]
             );
         }
@@ -75,8 +77,6 @@ class UsersController extends AbstractController{
         $password = $encoder->encodePassword($user, $password);
         // dodać 2h, bo inaczej po UTC-0 zapisuje 
         $created_at = new \DateTime('@'.strtotime('+2 hours'));
-        $entityManager = $this->getDoctrine()->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
 
         $user->setPassword($password);
         $user->setUsername($username);
@@ -87,9 +87,6 @@ class UsersController extends AbstractController{
         $errors = $validator->validate($user);
         if (count($errors) > 0) {
             throw $this->createNotFoundException($errors);
-        }
-        if($user){
-            throw $this->createNotFoundException("Użytkownik o podanej nazwie już istnieje");
         }
 
         $entityManager = $this->getDoctrine()->getManager();
@@ -182,7 +179,7 @@ class UsersController extends AbstractController{
         $jwt = JWT::encode($payload, $this->getParameter('jwt_secret'), 'HS256');
 
 
-        return new Response("Zmiana nazwy użytkownika się powiodła. Zaloguj się ponownie");
+        return new Response("Nowa nazwa użytkownia: ". $newUsername);
     }
 
     public function updatePassword(string $username, string $passwordNew, UserPasswordEncoderInterface $encoder): Response{
@@ -190,18 +187,18 @@ class UsersController extends AbstractController{
         $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
         // dodać 2h, bo inaczej po UTC-0 zapisuje 
         $updated_at = new \DateTime('@'.strtotime('+2 hours'));
-        $passwordNew = $encoder->encodePassword($user, $passwordNew);
         $usernameChecker = $this->get('security.token_storage')->getToken()->getUser()->getUsername();
+        $hashedPassword = $encoder->encodePassword($user, $passwordNew);
 
         if($usernameChecker !== $username){
-            throw $this->createNotFoundException("Nie możesz zmienić nazwy innego użytkownika");
+            throw $this->createNotFoundException("Nie możesz zmienić hasła innego użytkownika");
         }
 
         if(!$user){
             throw $this->createNotFoundException("Nie znaleziono podanego użytkownika");
         }
 
-        $user->setPassword($passwordNew);
+        $user->setPassword($hashedPassword);
         $user->setUpdatedAt($updated_at);
 
         $entityManager->persist($user);
