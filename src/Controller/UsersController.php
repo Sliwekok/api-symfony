@@ -8,21 +8,26 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\User as User;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Firebase\JWT\JWT;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UsersController extends AbstractController{
 
-    public function list(int $id): Response{
+    /**
+     * show data about 1 user
+     * 
+     * @Route("/api/users/show/{id}", name="show_user", methods={"POST"})
+     */
+    public function show(int $id): Response{
 
         $entityManager = $this->getDoctrine()->getManager();
         $user = $entityManager->getRepository(User::class)->find($id);
-        $created_at = $user->getCreatedAt();
-        $updated_at = $user->getUpdatedAt();
-        $activated = $user->GetIsActivated();
-        $username = $user->getUsername();
-        $roles = $user->getRoles();
+
+        $created_at =   $user->getCreatedAt();
+        $updated_at =   $user->getUpdatedAt();
+        $activated =    $user->GetIsActivated();
+        $username =     $user->getUsername();
+        $roles =        $user->getRoles();
 
         $userData = array(
             'username'  => $username,
@@ -36,15 +41,23 @@ class UsersController extends AbstractController{
         $userData = $serializer->serialize($userData, 'json');
 
         return new Response($userData);
+
     }
 
-    public function all(): Response{
+    /**
+     * list all users
+     * 
+     * @Route("/api/users/list", name="list_all_users", methods={"POST"})
+     */
+    public function list(): Response{
 
         $entityManager = $this->getDoctrine()->getManager();
         $allUsers = $entityManager->getRepository(User::class)->findAll();
+        
         $usersData = array();
-
+        
         foreach($allUsers as $user){
+
             $created_at = $user->getCreatedAt();
             $updated_at = $user->getUpdatedAt();
             $activated = $user->GetIsActivated();
@@ -61,6 +74,7 @@ class UsersController extends AbstractController{
                     'updated_at'=> $updated_at,
                 ]
             );
+
         }
 
         $serializer = $this->container->get('serializer');
@@ -69,75 +83,20 @@ class UsersController extends AbstractController{
         return new Response($usersData);
     }
 
-    public function registerUser($username, $password, ValidatorInterface $validator, UserPasswordEncoderInterface $encoder): Response{
-    
-        $user = new User();
-        $password = $encoder->encodePassword($user, $password);
-        // dodać 2h, bo inaczej po UTC-0 zapisuje 
-        $created_at = new \DateTime('@'.strtotime('+2 hours'));
-        $entityManager = $this->getDoctrine()->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
-
-        $user->setPassword($password);
-        $user->setUsername($username);
-        $user->setCreatedAt($created_at);
-        $user->setIsActivated(1);
-        $user->setRoles(['ROLE_USER']);
-        
-        $errors = $validator->validate($user);
-        if (count($errors) > 0) {
-            throw $this->createNotFoundException($errors);
-        }
-        if($user){
-            throw $this->createNotFoundException("Użytkownik o podanej nazwie już istnieje");
-        }
-
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-        $userId = "User ID: ". $user->getId(). "<br>Username: ". $user->getUsername();
-
-        return new Response($userId);
-    }
-
-    public function loginUser($username, $password, UserPasswordEncoderInterface $encoder): Response{
-        
-        $entityManager = $this->getDoctrine()->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
-        $password_verify = $encoder->isPasswordValid($user, $password);
-        $roles = $user->getRoles();
-        // payload - deklaruje dlugosc sesji tokena jwt
-        $payload = [
-            "username"  => $user->getUsername(),
-            "exp"       => (new \DateTime())->modify("+30 minutes")->getTimestamp(),
-            "role"      => $roles
-        ];
-        $jwt = JWT::encode($payload, $this->getParameter('jwt_secret'), 'HS256');
-
-        if(!$user || !$password_verify){
-            throw $this->createNotFoundException("Błędne dane logowania");
-        }
-
-        $tokenResponse = array(
-            'message' => 'success',
-            'token'   => sprintf('Bearer %s', $jwt),
-            // 'token'   => sprintf('Bearer %s', $jwt)
-        );
-
-        $serializer = $this->container->get('serializer');
-        $token = $serializer->serialize($tokenResponse, 'json');
-
-        return new Response($token);
-    }
-
+    /**
+     * delete user
+     * 
+     * @Route("/api/users/delete/{id}", name="delete_user", methods={"POST"})
+     */
     public function deleteUser(int $id): Response{
         
         $entityManager = $this->getDoctrine()->getManager();
         $user = $entityManager->getRepository(User::class)->find($id);
         
         if (!$user){
+
             throw $this->createNotFoundException("Użytkownik o id: ".$id." nie istnieje");
+            
         }
 
         $entityManager->remove($user);
@@ -147,22 +106,36 @@ class UsersController extends AbstractController{
 
     }
 
+    /**
+     * update username
+     * 
+     * @Route("/api/users/update/username/{username}/{newUsername}", name="update_username", methods={"POST"})
+     */
     public function updateUsername(string $username, string $newUsername): Response{
+
         $entityManager = $this->getDoctrine()->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
-        $newName = $entityManager->getRepository(User::class)->findOneBy(['username' => $newUsername]);
+        
         // dodać 2h, bo inaczej po UTC-0 zapisuje 
         $updated_at = new \DateTime('@'.strtotime('+2 hours'));
+        
+        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
+        $newName = $entityManager->getRepository(User::class)->findOneBy(['username' => $newUsername]);
         $usernameChecker = $this->get('security.token_storage')->getToken()->getUser()->getUsername();
 
         if($usernameChecker !== $username){
+
             throw $this->createNotFoundException("Nie możesz zmienić nazwy innego użytkownika");
+
         }
         if(!$user){
+            
             throw $this->createNotFoundException("Nie znaleziono podanego użytkownika");
+            
         }
-        if ($newName) {
+        if($newName) {
+
             throw $this->createNotFoundException("Podana nazwa użytkownika jest już zajęta");
+
         }
 
         $user->setUsername($newUsername);
@@ -171,35 +144,43 @@ class UsersController extends AbstractController{
         $entityManager->persist($user);
         $entityManager->flush();
 
-        // ustawienie od nowa jwt, aby user nie by wylogowywany po zmianie nazwy
-        $roles = $user->getRoles();
-        // payload - deklaruje dlugosc sesji tokena jwt
-        $payload = [
-            "username"  => $user->getUsername(),
-            "exp"       => (new \DateTime())->modify("+30 minutes")->getTimestamp(),
-            "role"      => $roles
-        ];
-        $jwt = JWT::encode($payload, $this->getParameter('jwt_secret'), 'HS256');
-
+        $createJWToken = $this->forward('App\Controller\JWTController::createToken', [
+            'username' => $username,
+            'roles'    => $roles,
+        ]);
 
         return new Response("Zmiana nazwy użytkownika się powiodła. Zaloguj się ponownie");
+
     }
 
+    /**
+     * update password
+     * 
+     * @Route("/api/users/update/password/{username}/{passwordNew}", name="update_username", methods={"POST"})
+     */
     public function updatePassword(string $username, string $passwordNew, UserPasswordEncoderInterface $encoder): Response{
+
         $entityManager = $this->getDoctrine()->getManager();
         $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
+
+        if(!$user){
+
+            throw $this->createNotFoundException("Nie znaleziono podanego użytkownika");
+
+        }
+
         // dodać 2h, bo inaczej po UTC-0 zapisuje 
         $updated_at = new \DateTime('@'.strtotime('+2 hours'));
         $passwordNew = $encoder->encodePassword($user, $passwordNew);
+        
         $usernameChecker = $this->get('security.token_storage')->getToken()->getUser()->getUsername();
 
         if($usernameChecker !== $username){
+
             throw $this->createNotFoundException("Nie możesz zmienić nazwy innego użytkownika");
+
         }
 
-        if(!$user){
-            throw $this->createNotFoundException("Nie znaleziono podanego użytkownika");
-        }
 
         $user->setPassword($passwordNew);
         $user->setUpdatedAt($updated_at);
@@ -208,10 +189,7 @@ class UsersController extends AbstractController{
         $entityManager->flush();
 
         return new Response("Hasło zaktualizowane");
-    }
 
-    public function logout(): Response{
-        return new Response("Zostałeś wylogowany");
     }
 
 }

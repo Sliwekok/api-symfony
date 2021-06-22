@@ -62,25 +62,31 @@ return [[
 '[C]Symfony%5CBundle%5CFrameworkBundle%5CController%5CAbstractController%23addLink' => 1,
 'Symfony%5CBundle%5CFrameworkBundle%5CController%5CAbstractController%24container' => 0,
 '[C]Symfony%5CBundle%5CFrameworkBundle%5CController%5CAbstractController%24container' => 1,
+'App%5CController%5CAuthController' => 0,
+'[C]App%5CController%5CAuthController' => 1,
+'App%5CController%5CAuthController%23registerUser' => 2,
+'[C]App%5CController%5CAuthController%23registerUser' => 1,
+'App%5CController%5CAuthController%23loginUser' => 3,
+'[C]App%5CController%5CAuthController%23loginUser' => 1,
+'App%5CController%5CAuthController%23logout' => 4,
+'[C]App%5CController%5CAuthController%23logout' => 1,
+'App%5CController%5CJWTController' => 0,
+'[C]App%5CController%5CJWTController' => 1,
+'App%5CController%5CJWTController%23createToken' => 0,
+'[C]App%5CController%5CJWTController%23createToken' => 1,
 'App%5CController%5CUsersController' => 0,
 '[C]App%5CController%5CUsersController' => 1,
-'App%5CController%5CUsersController%23list' => 0,
+'App%5CController%5CUsersController%23show' => 5,
+'[C]App%5CController%5CUsersController%23show' => 1,
+'App%5CController%5CUsersController%23list' => 6,
 '[C]App%5CController%5CUsersController%23list' => 1,
-'App%5CController%5CUsersController%23all' => 0,
-'[C]App%5CController%5CUsersController%23all' => 1,
-'App%5CController%5CUsersController%23registerUser' => 0,
-'[C]App%5CController%5CUsersController%23registerUser' => 1,
-'App%5CController%5CUsersController%23loginUser' => 0,
-'[C]App%5CController%5CUsersController%23loginUser' => 1,
-'App%5CController%5CUsersController%23deleteUser' => 0,
+'App%5CController%5CUsersController%23deleteUser' => 7,
 '[C]App%5CController%5CUsersController%23deleteUser' => 1,
-'App%5CController%5CUsersController%23updateUsername' => 0,
+'App%5CController%5CUsersController%23updateUsername' => 8,
 '[C]App%5CController%5CUsersController%23updateUsername' => 1,
-'App%5CController%5CUsersController%23updatePassword' => 0,
+'App%5CController%5CUsersController%23updatePassword' => 9,
 '[C]App%5CController%5CUsersController%23updatePassword' => 1,
-'App%5CController%5CUsersController%23logout' => 0,
-'[C]App%5CController%5CUsersController%23logout' => 1,
-'App%5CEntity%5CUser' => 2,
+'App%5CEntity%5CUser' => 10,
 '[C]App%5CEntity%5CUser' => 1,
 'App%5CEntity%5CUser%23getId' => 0,
 '[C]App%5CEntity%5CUser%23getId' => 1,
@@ -114,19 +120,19 @@ return [[
 '[C]App%5CEntity%5CUser%23getUpdatedAt' => 1,
 'App%5CEntity%5CUser%23setUpdatedAt' => 0,
 '[C]App%5CEntity%5CUser%23setUpdatedAt' => 1,
-'App%5CEntity%5CUser%24id' => 3,
+'App%5CEntity%5CUser%24id' => 11,
 '[C]App%5CEntity%5CUser%24id' => 1,
-'App%5CEntity%5CUser%24username' => 4,
+'App%5CEntity%5CUser%24username' => 12,
 '[C]App%5CEntity%5CUser%24username' => 1,
-'App%5CEntity%5CUser%24roles' => 5,
+'App%5CEntity%5CUser%24roles' => 13,
 '[C]App%5CEntity%5CUser%24roles' => 1,
-'App%5CEntity%5CUser%24password' => 6,
+'App%5CEntity%5CUser%24password' => 14,
 '[C]App%5CEntity%5CUser%24password' => 1,
-'App%5CEntity%5CUser%24created_at' => 7,
+'App%5CEntity%5CUser%24created_at' => 15,
 '[C]App%5CEntity%5CUser%24created_at' => 1,
-'App%5CEntity%5CUser%24is_activated' => 8,
+'App%5CEntity%5CUser%24is_activated' => 16,
 '[C]App%5CEntity%5CUser%24is_activated' => 1,
-'App%5CEntity%5CUser%24updated_at' => 9,
+'App%5CEntity%5CUser%24updated_at' => 17,
 '[C]App%5CEntity%5CUser%24updated_at' => 1,
 'Doctrine%5CBundle%5CDoctrineBundle%5CController%5CProfilerController' => 0,
 '[C]Doctrine%5CBundle%5CDoctrineBundle%5CController%5CProfilerController' => 1,
@@ -598,8 +604,224 @@ return [[
 ], [
 
 0 => [],
-1 => 1624270984,
+1 => 1624343643,
 2 => static function () {
+    return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+        $o = [
+            clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['Symfony\\Component\\Routing\\Annotation\\Route'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Routing\\Annotation\\Route')),
+        ],
+        null,
+        [
+            'Symfony\\Component\\Routing\\Annotation\\Route' => [
+                'path' => [
+                    '/register/{username}/{password}',
+                ],
+                'name' => [
+                    'register_user',
+                ],
+                'methods' => [
+                    [
+                        'POST',
+                    ],
+                ],
+            ],
+        ],
+        [
+            $o[0],
+        ],
+        []
+    );
+},
+3 => static function () {
+    return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+        $o = [
+            clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['Symfony\\Component\\Routing\\Annotation\\Route'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Routing\\Annotation\\Route')),
+        ],
+        null,
+        [
+            'Symfony\\Component\\Routing\\Annotation\\Route' => [
+                'path' => [
+                    '/login/{username}/{password}',
+                ],
+                'name' => [
+                    'login_user',
+                ],
+                'methods' => [
+                    [
+                        'POST',
+                    ],
+                ],
+            ],
+        ],
+        [
+            $o[0],
+        ],
+        []
+    );
+},
+4 => static function () {
+    return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+        $o = [
+            clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['Symfony\\Component\\Routing\\Annotation\\Route'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Routing\\Annotation\\Route')),
+        ],
+        null,
+        [
+            'Symfony\\Component\\Routing\\Annotation\\Route' => [
+                'path' => [
+                    '/logout',
+                ],
+                'name' => [
+                    'logout',
+                ],
+                'methods' => [
+                    [
+                        'POST',
+                    ],
+                ],
+            ],
+        ],
+        [
+            $o[0],
+        ],
+        []
+    );
+},
+5 => static function () {
+    return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+        $o = [
+            clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['Symfony\\Component\\Routing\\Annotation\\Route'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Routing\\Annotation\\Route')),
+        ],
+        null,
+        [
+            'Symfony\\Component\\Routing\\Annotation\\Route' => [
+                'path' => [
+                    '/api/users/show/{id}',
+                ],
+                'name' => [
+                    'show_user',
+                ],
+                'methods' => [
+                    [
+                        'POST',
+                    ],
+                ],
+            ],
+        ],
+        [
+            $o[0],
+        ],
+        []
+    );
+},
+6 => static function () {
+    return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+        $o = [
+            clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['Symfony\\Component\\Routing\\Annotation\\Route'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Routing\\Annotation\\Route')),
+        ],
+        null,
+        [
+            'Symfony\\Component\\Routing\\Annotation\\Route' => [
+                'path' => [
+                    '/api/users/list',
+                ],
+                'name' => [
+                    'list_all_users',
+                ],
+                'methods' => [
+                    [
+                        'POST',
+                    ],
+                ],
+            ],
+        ],
+        [
+            $o[0],
+        ],
+        []
+    );
+},
+7 => static function () {
+    return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+        $o = [
+            clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['Symfony\\Component\\Routing\\Annotation\\Route'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Routing\\Annotation\\Route')),
+        ],
+        null,
+        [
+            'Symfony\\Component\\Routing\\Annotation\\Route' => [
+                'path' => [
+                    '/api/users/delete/{id}',
+                ],
+                'name' => [
+                    'delete_user',
+                ],
+                'methods' => [
+                    [
+                        'POST',
+                    ],
+                ],
+            ],
+        ],
+        [
+            $o[0],
+        ],
+        []
+    );
+},
+8 => static function () {
+    return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+        $o = [
+            clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['Symfony\\Component\\Routing\\Annotation\\Route'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Routing\\Annotation\\Route')),
+        ],
+        null,
+        [
+            'Symfony\\Component\\Routing\\Annotation\\Route' => [
+                'path' => [
+                    '/api/users/update/username/{username}/{newUsername}',
+                ],
+                'name' => [
+                    'update_username',
+                ],
+                'methods' => [
+                    [
+                        'POST',
+                    ],
+                ],
+            ],
+        ],
+        [
+            $o[0],
+        ],
+        []
+    );
+},
+9 => static function () {
+    return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+        $o = [
+            clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['Symfony\\Component\\Routing\\Annotation\\Route'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Routing\\Annotation\\Route')),
+        ],
+        null,
+        [
+            'Symfony\\Component\\Routing\\Annotation\\Route' => [
+                'path' => [
+                    '/api/users/update/password/{username}/{passwordNew}',
+                ],
+                'name' => [
+                    'update_username',
+                ],
+                'methods' => [
+                    [
+                        'POST',
+                    ],
+                ],
+            ],
+        ],
+        [
+            $o[0],
+        ],
+        []
+    );
+},
+10 => static function () {
     return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
         $o = [
             clone (($p = &\Symfony\Component\VarExporter\Internal\Registry::$prototypes)['Doctrine\\ORM\\Mapping\\Entity'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Mapping\\Entity')),
@@ -623,7 +845,7 @@ return [[
         []
     );
 },
-3 => static function () {
+11 => static function () {
     return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
         $o = [
             clone (($p = &\Symfony\Component\VarExporter\Internal\Registry::$prototypes)['Doctrine\\ORM\\Mapping\\Id'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Mapping\\Id')),
@@ -652,7 +874,7 @@ return [[
         []
     );
 },
-4 => static function () {
+12 => static function () {
     return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
         $o = [
             clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['Doctrine\\ORM\\Mapping\\Column'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Mapping\\Column')),
@@ -683,7 +905,7 @@ return [[
         []
     );
 },
-5 => static function () {
+13 => static function () {
     return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
         $o = [
             clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['Doctrine\\ORM\\Mapping\\Column'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Mapping\\Column')),
@@ -708,7 +930,7 @@ return [[
         []
     );
 },
-6 => static function () {
+14 => static function () {
     return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
         $o = [
             clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['Doctrine\\ORM\\Mapping\\Column'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Mapping\\Column')),
@@ -733,7 +955,7 @@ return [[
         []
     );
 },
-7 => static function () {
+15 => static function () {
     return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
         $o = [
             clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['Doctrine\\ORM\\Mapping\\Column'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Mapping\\Column')),
@@ -758,7 +980,7 @@ return [[
         []
     );
 },
-8 => static function () {
+16 => static function () {
     return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
         $o = [
             clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['Doctrine\\ORM\\Mapping\\Column'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Mapping\\Column')),
@@ -783,7 +1005,7 @@ return [[
         []
     );
 },
-9 => static function () {
+17 => static function () {
     return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
         $o = [
             clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['Doctrine\\ORM\\Mapping\\Column'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Mapping\\Column')),
