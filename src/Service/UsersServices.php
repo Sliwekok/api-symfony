@@ -6,89 +6,159 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\User as User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UsersServices extends AbstractController
 {
 
-    private $validator;
-    private $encoder;
-
-    public function __construct(ValidatorInterface $validator, UserPasswordEncoderInterface $encoder){
-        $this->validator = $validator;
-        $this->encoder = $encoder;
-    }
+    /**
+     * 
+     *  Users service zarzadza uzytkownika: pokazuje, modyfikuje i usuwa dane
+     * 
+     */
 
     /**
-     * Rejestracja użytkownika 
+     * pobieranie danych pojedynczego usera
+     * 
+     * pobieranie danych wszystkich: funkcja nizej: fetchAllData
      */
-    public function registration($username, $password){
+    public function fetchData($id){
 
         $entityManager = $this->getDoctrine()->getManager();
-        
-        $user = new User();
+        $user = $entityManager->getRepository(User::class)->find($id);
 
-        $password = $this->encoder->encodePassword($user, $password);
-        $created_at = new \DateTime('@'.strtotime('+2 hours'));
-        $isNameTaken = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
+        $created_at =   $user->getCreatedAt();
+        $updated_at =   $user->getUpdatedAt();
+        $activated =    $user->GetIsActivated();
+        $username =     $user->getUsername();
+        $roles =        $user->getRoles();
 
-        if($isNameTaken){
+        $userData = array(
+            'username'  => $username,
+            'roles'     => $roles,
+            'is_active' => $activated,
+            'created_at'=> $created_at,
+            'updated_at'=> $updated_at,
+        );
 
-            throw $this->createNotFoundException("Użytkownik o podanej nazwie już istnieje");
-
-        }
-
-        $user->setPassword($password);
-        $user->setUsername($username);
-        $user->setCreatedAt($created_at);
-        $user->setIsActivated(1);
-        $user->setRoles(['ROLE_USER']);
-
-        $errors = $this->validator->validate($user);
-
-        if (count($errors) > 0) {
-
-            throw $this->createNotFoundException($errors);
-
-        }
-
-
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-        return ("Nazwa użytkownika: ". $user->getUsername(). "<br>ID: ". $user->getId());
+        return new JsonResponse($userData);
 
     }
 
     /**
-     * logowanie użytkownika 
+     * pobieranie danych wszystkich
      */
-    public function loginUser($username, $password){
+    public function fetchAllData(){
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $users = $entityManager->getRepository(User::class)->findAll();
+
+        $userData = array();
+
+        foreach($users as $user){
+
+            $username =     $user->getUsername();
+            $roles =        $user->getRoles();
+            $activated =    $user->GetIsActivated();
+            $created_at =   $user->getCreatedAt();
+            $updated_at =   $user->getUpdatedAt();
+
+            array_push(
+                $userData,
+                [
+                    'username'  => $username,
+                    'roles'     => $roles,
+                    'is_active' => $activated,
+                    'created_at'=> $created_at,
+                    'updated_at'=> $updated_at,
+                ]
+            );
+
+        }
+
+        return new JsonResponse($userData);
+
+    }
+
+    /**
+     * aktualizacja danych uzytkownika - aktaulicja username
+     */
+    public function changeUsername($username, $newUsername){
 
         $entityManager = $this->getDoctrine()->getManager();
         $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
 
-        $password_verify = $encoder->isPasswordValid($user, $password);
-        $roles = $user->getRoles();
+        $user->setUsername($newUsername);
 
-        $createJWToken = $this->forward('App\Controller\JWTController::createToken', [
-            'username' => $username,
-            'roles'    => $roles,
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new Response("Zmieniłes nazwę uzytkownika na ". $newUsername);
+
+    }
+
+    /**
+     * aktualizacja danych uzytkownika - aktaulicja password
+     */
+    public function changePassword($passwordNew){
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
+
+        // sprawdzanie uzytkownika
+        $this->forward('App\Controller\UsersController::checkUser', [
+            'user'      => $user,
+            'newName'   => $newName,
         ]);
 
-        // wypisz token
-        $tokenResponse = array(
-            'message' => 'success',
-            'token'   => sprintf('Bearer %s', $createJWToken),
-        );
+        $passwordNew = $encoder->encodePassword($user, $passwordNew);
 
-        $serializer = $this->container->get('serializer');
-        $token = $serializer->serialize($tokenResponse, 'json');
+        $user->setPassword($passwordNew);
 
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new Response("Hasło zaktualizowane");
+
+    }
+
+    // sprawdzanie danych uzytkownika
+    public function checkUser($username, $newName = null){
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
+
+        //sprawdzanie czy uzytkownik w parametrze 1 istnieje
+        if(!$user){
+            
+            throw $this->createNotFoundException("Nie znaleziono podanego użytkownika");
+            
+        }
+        
+        // sprawdza zalogowanego uzytkownika
+        if($token = $this->get('security.token_storage')->getToken() !== null ){
+            $usernameChecker = $token->getUser()->getUsername();
+
+            if($usernameChecker !== $user){
+    
+                throw $this->createNotFoundException("Nie możesz zmienić nazwy innego użytkownika");
+
+            }
+
+        }
+
+        // sprawdzanie, czy nazwa jest już zajęta
+        if(isset($newName)){
+            
+            $isNameTaken = $entityManager->getRepository(User::class)->findOneBy(['username' => $newName]);
+            if($isNameTaken){
+                
+                throw $this->createNotFoundException("Podana nazwa użytkownika jest już zajęta");
+
+            }
+
+        }
 
     }
 

@@ -24,7 +24,7 @@ security:
                 authenticators:
                     - App\Security\JwtAuthenticator
             logout:
-                path:   logout
+                path:   /logout
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
@@ -35,7 +35,7 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/api/users/show, roles: ROLE_ADMIN }
+        - { path: ^/api/users/list, roles: ROLE_ADMIN }
         - { path: ^/api/users/delete, roles: ROLE_ADMIN }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         # - { path: ^/admin, roles: ROLE_ADMIN }

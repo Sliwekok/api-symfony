@@ -39,6 +39,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="datetime")
+     * @ORM\Version
+     * @var \DateTime
      */
     private $created_at;
 
@@ -49,9 +51,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Version
+     * @var \DateTime
      */
     private $updated_at;
 
+
+    public function __construct(){
+
+        // $this->roles = ['ROLE_USER'];
+        $this->created_at = new \DateTime('now');
+        $this->updated_at = new \DateTime('now');
+
+    }
 
     public function getId(): ?int
     {

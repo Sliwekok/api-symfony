@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '4ec373ad4cd5d0010c394894d7c150c73e8846a7',
+    'reference' => '6e5f960b8c14e44f392c363b89ef07717e2c2dd7',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '4ec373ad4cd5d0010c394894d7c150c73e8846a7',
+      'reference' => '6e5f960b8c14e44f392c363b89ef07717e2c2dd7',
     ),
     'composer/package-versions-deprecated' => 
     array (
@@ -40,12 +40,12 @@
     ),
     'doctrine/cache' => 
     array (
-      'pretty_version' => '1.11.3',
-      'version' => '1.11.3.0',
+      'pretty_version' => '2.0.3',
+      'version' => '2.0.3.0',
       'aliases' => 
       array (
       ),
-      'reference' => '3bb5588cec00a0268829cc4a518490df6741af9d',
+      'reference' => 'c9622c6820d3ede1e2315a6a377ea1076e421d88',
     ),
     'doctrine/collections' => 
     array (
@@ -76,12 +76,12 @@
     ),
     'doctrine/dbal' => 
     array (
-      'pretty_version' => '2.13.1',
-      'version' => '2.13.1.0',
+      'pretty_version' => '2.13.2',
+      'version' => '2.13.2.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'c800380457948e65bbd30ba92cc17cda108bf8c9',
+      'reference' => '8dd39d2ead4409ce652fd4f02621060f009ea5e4',
     ),
     'doctrine/deprecations' => 
     array (
@@ -157,12 +157,12 @@
     ),
     'doctrine/migrations' => 
     array (
-      'pretty_version' => '3.1.3',
-      'version' => '3.1.3.0',
+      'pretty_version' => '3.1.4',
+      'version' => '3.1.4.0',
       'aliases' => 
       array (
       ),
-      'reference' => '8d0c58655cf9d76462d00ec5dd099737e513e86d',
+      'reference' => '207210c57f6c15835e8d6228075cd235bd061efc',
     ),
     'doctrine/orm' => 
     array (
@@ -517,12 +517,12 @@
     ),
     'symfony/maker-bundle' => 
     array (
-      'pretty_version' => 'v1.31.1',
-      'version' => '1.31.1.0',
+      'pretty_version' => 'v1.32.0',
+      'version' => '1.32.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '4f57a44cef0b4555043160b8bf223fcde8a7a59a',
+      'reference' => '702558c5fc5a27796eedad12a82bb27be76247dc',
     ),
     'symfony/password-hasher' => 
     array (

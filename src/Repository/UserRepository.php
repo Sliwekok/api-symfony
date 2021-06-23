@@ -40,13 +40,4 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-    /**
-     * login user, data sent from usersServices 
-     */
-    public function loginUser($username, $password){
-
-
-
-    }
-
 }

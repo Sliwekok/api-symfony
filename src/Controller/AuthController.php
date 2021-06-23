@@ -10,6 +10,7 @@ use App\Entity\User as User;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\AuthServices;
 use App\Service\UsersServices;
 
 
@@ -20,16 +21,14 @@ class AuthController extends AbstractController
      *
      * @Route("/register/{username}/{password}", name="register_user", methods={"POST"})
      */
-    public function registerUser($username, $password, UsersServices $usersServices): Response{
+    public function registerUser($username, $password, AuthServices $authServices, UsersServices $usersServices){
     
-        $this->forward('App\Controller\AuthController::checkCredentials', [
-            'username' => $username,
-            'password' => $password
-        ]);
+        // sprawdz dane
+        $authServices->checkCredentials($username, $password);
 
-        // pass to UsersServices
-        $register = $usersServices->registration($username, $password);
-        
+        // pass to AuthServices
+        $register = $authServices->registration($username, $password);
+
         return new Response($register);
 
     }
@@ -39,43 +38,38 @@ class AuthController extends AbstractController
      *
      * @Route("/login/{username}/{password}", name="login_user", methods={"POST"})
      */
-    public function loginUser($username, $password): Response{
+    public function loginUser($username, $password, AuthServices $authServices, UsersServices $usersServices){
         
-        $this->forward('App\Controller\AuthController::checkCredentials', [
-            'username' => $username,
-            'password' => $password
-        ]);
+        // sprawdz dane
+        $authServices->checkCredentials($username, $password);
+
+        // sprawdza zalogowanego uzytkownika
+        $usersServices->checkUser($username);
+   
+        // pass to AuthServices
+        $login = $authServices->loginUser($username, $password);
        
-        return new Response($token);
+        return $login;
 
     }
     /**
-     * Logout user - logika w pliku security
+     * Logout user - usuwanie sesji i ciasteczek
      *
-     * @Route("/logout", name="logout", methods={"POST"})
+     * @Route("/logout", name="logout", methods={"GET"})
      */
     public function logout(): Response{
+
+        $response = new Response();
+
+        // usuwanie sesji
+        $response->headers->clearCookie('PHPSESSID');
+        $response->headers->clearCookie('Authorization');
+
+        $response->send();
 
         return new Response("Zostałeś wylogowany");
 
     }
 
-    public function isLogged(): Response{
-
-
-
-    }
-
-    public function checkCredentials($username, $password){
-
-        if( strlen($username) == 0 || strlen($password) == 0 ){
-
-            throw $this->createNotFoundException("Pola nie mogą być puste");
-
-        }
-
-        return true;
-
-    }
 
 }
